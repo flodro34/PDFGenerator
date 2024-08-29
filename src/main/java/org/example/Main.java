@@ -1,19 +1,52 @@
 package org.example;
 
+import com.itextpdf.kernel.color.Color;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.border.Border;
+import com.itextpdf.layout.border.SolidBorder;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+
+import java.io.FileNotFoundException;
+
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
-    public static void main(String[] args) {
-        // Press Alt+Entrée with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+    public static void main(String[] args) throws FileNotFoundException {
+        String path = "invoice.pdf";
+        PdfWriter pdfWriter = new PdfWriter(path);
+        PdfDocument pdfDocument  = new PdfDocument(pdfWriter);
+        pdfDocument.setDefaultPageSize(PageSize.A4);
+        Document document = new Document(pdfDocument);
+        //document.add(new Paragraph("Hello Floflo !"));
+        float threecol = 190f;
+        float twocol = 285f;
+        float twocol150 = twocol + 150f;
+        float[] twocolumnWidth = {twocol150, twocol};
+        float[] fullwidth ={threecol*3};
 
-        // Press Maj+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
+        Table table = new Table(twocolumnWidth);
+        table.addCell(new Cell().add("Facture").setFontSize(20f) .setBorder(Border.NO_BORDER).setBold());
+        Table nestedtable = new Table(new float[]{twocol/2, twocol/2});
+        nestedtable.addCell(new Cell().add("Facture No.").setBold().setBorder(Border.NO_BORDER));
+        nestedtable.addCell(new Cell().add("PO123456").setBorder(Border.NO_BORDER));
+        nestedtable.addCell(new Cell().add("Facture Date :").setBold().setBorder(Border.NO_BORDER));
+        nestedtable.addCell(new Cell().add("15/07/2024").setBorder(Border.NO_BORDER));
 
-            // Press Maj+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
-        }
+        table.addCell(new Cell().add(nestedtable).setBorder(Border.NO_BORDER));
+
+        Border gb  = new SolidBorder(Color.GRAY,2f);
+        Table divider = new Table(fullwidth);
+        divider.setBorder(gb);
+
+        document.add(table);
+        document.add(divider);
+
+        document.close();
+        System.out.println("pdf generated !");
     }
 }
